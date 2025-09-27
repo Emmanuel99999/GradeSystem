@@ -1,0 +1,33 @@
+@model IEnumerable<AcademicGradingSystem.Models.Report>
+@{
+    ViewData["Title"] = "Reports";
+}
+<h2>Reports</h2>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Generate Report</a>
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Final Grade</th>
+            <th>Generated</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.Student.FirstName @item.Student.LastName</td>
+            <td>@item.Course.CourseName</td>
+            <td>@item.FinalGrade</td>
+            <td>@item.GeneratedAt.ToString("yyyy-MM-dd HH:mm")</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.ReportId" class="btn btn-sm btn-info">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ReportId" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,24 @@
+@model AcademicGradingSystem.Models.AcademicPeriod
+@{
+    ViewData["Title"] = "Period Details";
+}
+<h2>Period Details</h2>
+<div>
+    <h4>@Model.Name</h4>
+    <p>Start: @Model.StartDate.ToShortDateString()</p>
+    <p>End: @Model.EndDate.ToShortDateString()</p>
+</div>
+@if (Model.Courses != null && Model.Courses.Any())
+{
+    <h5>Courses in this period</h5>
+    <ul>
+    @foreach (var c in Model.Courses)
+    {
+        <li>@c.CourseName (@c.Subject?.SubjectName)</li>
+    }
+    </ul>
+}
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.PeriodId" class="btn btn-warning">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</p>

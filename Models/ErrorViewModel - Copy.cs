@@ -1,6 +1,6 @@
 namespace GradeSystem.Models
 {
-    public class ErrorViewModel
+    public class User
     {
         public string? RequestId { get; set; }
 

@@ -1,0 +1,9 @@
+@model IEnumerable<AcademicGradingSystem.Models.EvaluationPlan>
+<h2>Evaluation Plans</h2>
+<a asp-action="Create" class="btn btn-primary">New Plan</a>
+<table class="table">
+<thead><tr><th>Activity</th><th>Weight</th><th>Due</th><th>Course</th><th></th></tr></thead>
+<tbody>
+@foreach (var p in Model){<tr><td>@p.ActivityName</td><td>@p.Weight</td><td>@p.DueDate.ToShortDateString()</td><td>@p.Course.CourseName</td><td><a asp-action="Edit" asp-route-id=@p.PlanId>Edit</a> | <a asp-action="Details" asp-route-id=@p.PlanId>Details</a> | <a asp-action="Delete" asp-route-id=@p.PlanId>Delete</a></td></tr>}
+</tbody>
+</table>

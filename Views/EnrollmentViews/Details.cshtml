@@ -1,0 +1,15 @@
+@model AcademicGradingSystem.Models.Enrollment
+@{
+    ViewData["Title"] = "Enrollment Details";
+}
+<h2>Enrollment Details</h2>
+<div>
+    <p><strong>Student:</strong> @Model.Student.FirstName @Model.Student.LastName (@Model.Student.Email)</p>
+    <p><strong>Course:</strong> @Model.Course.CourseName</p>
+    <p><strong>Subject:</strong> @Model.Course.Subject?.SubjectName</p>
+    <p><strong>Registered:</strong> @Model.RegistrationDate.ToString("yyyy-MM-dd")</p>
+</div>
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.EnrollmentId" class="btn btn-warning">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</p>

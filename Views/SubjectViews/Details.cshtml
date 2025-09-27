@@ -1,0 +1,25 @@
+@model AcademicGradingSystem.Models.Subject
+@{
+    ViewData["Title"] = "Subject Details";
+}
+<h2>Subject Details</h2>
+<div>
+    <h4>@Model.SubjectName</h4>
+    <p>Code: @Model.Code</p>
+    <p>Credits: @Model.Credits</p>
+    <p>Program: @Model.Program?.ProgramName</p>
+</div>
+@if (Model.Courses != null && Model.Courses.Any())
+{
+    <h5>Courses</h5>
+    <ul>
+    @foreach (var c in Model.Courses)
+    {
+        <li>@c.CourseName</li>
+    }
+    </ul>
+}
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.SubjectId" class="btn btn-warning">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</p>

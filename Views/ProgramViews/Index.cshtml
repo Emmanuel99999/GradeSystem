@@ -1,0 +1,37 @@
+@model IEnumerable<AcademicGradingSystem.Models.Program>
+
+@{
+    ViewData["Title"] = "Programs";
+}
+
+<h2>Programs</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Program</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Program Name</th>
+            <th>Description</th>
+            <th># Subjects</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+            <td>@item.ProgramName</td>
+            <td>@item.Description</td>
+            <td>@(item.Subjects != null ? item.Subjects.Count : 0)</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ProgramId" class="btn btn-sm btn-warning">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ProgramId" class="btn btn-sm btn-info">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ProgramId" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

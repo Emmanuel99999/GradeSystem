@@ -1,0 +1,33 @@
+@model AcademicGradingSystem.Models.Report
+@using System.Linq
+@{
+    ViewData["Title"] = "Report Details";
+    var breakdown = ViewData["Breakdown"] as System.Collections.IEnumerable;
+}
+<h2>Report Details</h2>
+<div>
+    <p><strong>Student:</strong> @Model.Student.FirstName @Model.Student.LastName (@Model.Student.Email)</p>
+    <p><strong>Course:</strong> @Model.Course.CourseName (@Model.Course.Subject?.SubjectName)</p>
+    <p><strong>Final Grade:</strong> @Model.FinalGrade</p>
+    <p><strong>Generated:</strong> @Model.GeneratedAt.ToString("yyyy-MM-dd HH:mm")</p>
+</div>
+@if (breakdown != null)
+{
+    <h4>Breakdown</h4>
+    <table class="table">
+        <thead><tr><th>Activity</th><th>Weight</th><th>Score</th></tr></thead>
+        <tbody>
+        @foreach (dynamic b in breakdown)
+        {
+            <tr>
+                <td>@b.ActivityName</td>
+                <td>@b.Weight</td>
+                <td>@(b.Score.HasValue ? b.Score.ToString() : "—")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</p>

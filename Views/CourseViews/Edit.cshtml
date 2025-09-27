@@ -1,0 +1,31 @@
+@model AcademicGradingSystem.Models.Course
+@{
+    ViewData["Title"] = "Edit Course";
+}
+<h2>Edit Course</h2>
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="CourseId" />
+    <div class="form-group">
+        <label asp-for="CourseName"></label>
+        <input asp-for="CourseName" class="form-control" />
+        <span asp-validation-for="CourseName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Subject</label>
+        <select asp-for="SubjectId" class="form-control"
+                asp-items="@(new SelectList(ViewData["Subjects"], "SubjectId", "SubjectName"))"></select>
+    </div>
+    <div class="form-group">
+        <label>Academic Period</label>
+        <select asp-for="PeriodId" class="form-control"
+                asp-items="@(new SelectList(ViewData["Periods"], "PeriodId", "Name"))"></select>
+    </div>
+    <div class="form-group">
+        <label>Teacher</label>
+        <select asp-for="TeacherId" class="form-control"
+                asp-items="@(new SelectList(ViewData["Teachers"], "UserId", "Email"))"></select>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
