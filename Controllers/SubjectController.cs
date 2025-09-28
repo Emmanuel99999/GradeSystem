@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using AcademicGradingSystem.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AcademicGradingSystem.Models;
@@ -42,7 +43,7 @@ namespace AcademicGradingSystem.Controllers
         // GET: Subject/Create
         public IActionResult Create()
         {
-            ViewData["Programs"] = _context.Programs.ToList();
+            ViewData["Programs"] = _context.AcademicProgram.ToList();
             return View();
         }
 
@@ -68,7 +69,7 @@ namespace AcademicGradingSystem.Controllers
             var subject = await _context.Subjects.FindAsync(id);
             if (subject == null) return NotFound();
 
-            ViewData["Programs"] = _context.Programs.ToList();
+            ViewData["Programs"] = _context.AcademicProgram.ToList();
             return View(subject);
         }
 

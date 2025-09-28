@@ -1,8 +1,177 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Academic Grading System";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 text-primary">Academic Grading System</h1>
+        <p class="lead">Sistema integral de gestión académica</p>
+        <hr class="my-4">
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row">
+        <!-- Academic Periods -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Periodos Académicos</h5>
+                    <p class="card-text">Gestionar periodos académicos y semestres</p>
+                    <a href="@Url.Action("Index", "AcademicPeriod")" class="btn btn-primary">Acceder</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-book fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Cursos</h5>
+                    <p class="card-text">Administrar cursos y materias</p>
+                    <a href="@Url.Action("Index", "Course")" class="btn btn-success">Acceder</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grades -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-bar fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Calificaciones</h5>
+                    <p class="card-text">Gestionar notas y evaluaciones</p>
+                    <a href="@Url.Action("Index", "Grade")" class="btn btn-warning">Acceder</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="row">
+        <!-- Students/Users -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Estudiantes</h5>
+                    <p class="card-text">Administrar estudiantes y usuarios</p>
+                    <a href="@Url.Action("Index", "User")" class="btn btn-info">Acceder</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enrollments -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-clipboard-list fa-3x text-secondary mb-3"></i>
+                    <h5 class="card-title">Inscripciones</h5>
+                    <p class="card-text">Gestionar inscripciones a cursos</p>
+                    <a href="@Url.Action("Index", "Enrollment")" class="btn btn-secondary">Acceder</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evaluation Plans -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-tasks fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Planes de Evaluación</h5>
+                    <p class="card-text">Configurar actividades y ponderaciones</p>
+                    <a href="@Url.Action("Index", "EvaluationPlan")" class="btn btn-danger">Acceder</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Third Row -->
+    <div class="row justify-content-center">
+        <!-- Reports -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-file-alt fa-3x text-dark mb-3"></i>
+                    <h5 class="card-title">Reportes</h5>
+                    <p class="card-text">Generar reportes y boletines</p>
+                    <a href="@Url.Action("Index", "Report")" class="btn btn-dark">Acceder</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-graduation-cap fa-3x text-purple mb-3"></i>
+                    <h5 class="card-title">Materias</h5>
+                    <p class="card-text">Administrar materias y programas</p>
+                    <a href="@Url.Action("Index", "Subject")" class="btn btn-purple" style="background-color: #6f42c1; color: white;">Acceder</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Resumen del Sistema</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h3 class="text-primary">150</h3>
+                            <p class="text-muted">Estudiantes Activos</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-success">25</h3>
+                            <p class="text-muted">Cursos Activos</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-warning">8</h3>
+                            <p class="text-muted">Periodos Académicos</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h3 class="text-info">12</h3>
+                            <p class="text-muted">Profesores</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .btn-purple {
+        background-color: #6f42c1;
+        border-color: #6f42c1;
+        color: white;
+    }
+    
+    .btn-purple:hover {
+        background-color: #5a2d91;
+        border-color: #5a2d91;
+        color: white;
+    }
+    
+    .card {
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .text-purple {
+        color: #6f42c1 !important;
+    }
+</style>
+
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

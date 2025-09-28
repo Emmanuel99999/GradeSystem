@@ -1,4 +1,4 @@
-@model AcademicGradingSystem.Models.Program
+@model AcademicGradingSystem.Models.AcademicProgram
 
 @{
     ViewData["Title"] = "Program Details";
@@ -16,7 +16,7 @@
         <ul>
         @foreach (var s in Model.Subjects)
         {
-            <li>@s.Code - @s.SubjectName (@s.Credits credits)</li>
+            <li>@s.Code - @s.SubjectName (@s.Code credits)</li>
         }
         </ul>
     }

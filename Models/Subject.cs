@@ -11,19 +11,18 @@ namespace AcademicGradingSystem.Models
 
         [Required]
         [MaxLength(120)]
-        public string SubjectName { get; set; }
+        public string SubjectName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(20)]
-        public string Code { get; set; }
+        public string Code { get; set; } = string.Empty;
 
-        public int Credits { get; set; }
-
-        [ForeignKey("Program")]
+        // Foreign key a AcademicProgram
         public int ProgramId { get; set; }
 
-        // Navigation
-        public Program Program { get; set; }
-        public ICollection<Course> Courses { get; set; }
+        [ForeignKey("ProgramId")]
+        public AcademicProgram Program { get; set; } = null!;
+
+        public ICollection<Course> Courses { get; set; } = new List<Course>();
     }
 }

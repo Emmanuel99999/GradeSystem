@@ -3,19 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AcademicGradingSystem.Models
 {
-    public class Program
+    public class AcademicProgram
     {
         [Key]
         public int ProgramId { get; set; }
 
         [Required]
         [MaxLength(120)]
-        public string ProgramName { get; set; }
+        public string ProgramName { get; set; } = string.Empty;
 
         [MaxLength(500)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
-        // Navigation: one Program -> many Subjects
-        public ICollection<Subject> Subjects { get; set; }
+        // Inicializa la colección para evitar null reference y ayudar a EF Core
+        public ICollection<Subject> Subjects { get; set; } = new List<Subject>();
     }
 }

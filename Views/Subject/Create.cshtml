@@ -16,14 +16,9 @@
         <span asp-validation-for="Code" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="Credits"></label>
-        <input asp-for="Credits" type="number" class="form-control" />
-        <span asp-validation-for="Credits" class="text-danger"></span>
-    </div>
-    <div class="form-group">
         <label>Program</label>
         <select asp-for="ProgramId" class="form-control"
-                asp-items="@(new SelectList(ViewData["Programs"], "ProgramId", "ProgramName"))"></select>
+                asp-items="@(new SelectList((IEnumerable<SelectListItem>)ViewData["Programs"], "ProgramId", "ProgramName"))"></select>
     </div>
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>

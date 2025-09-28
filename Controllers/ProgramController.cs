@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using AcademicGradingSystem.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AcademicGradingSystem.Models;
@@ -18,11 +19,11 @@ namespace AcademicGradingSystem.Controllers
         // GET: Program
         public async Task<IActionResult> Index()
         {
-            var programs = await _context.Programs
+            var AcademicProgram = await _context.AcademicProgram
                                          .Include(p => p.Subjects)
                                          .OrderBy(p => p.ProgramName)
                                          .ToListAsync();
-            return View(programs);
+            return View(AcademicProgram);
         }
 
         // GET: Program/Details/5
@@ -30,7 +31,7 @@ namespace AcademicGradingSystem.Controllers
         {
             if (id == null) return NotFound();
 
-            var program = await _context.Programs
+            var program = await _context.AcademicProgram
                                         .Include(p => p.Subjects)
                                         .FirstOrDefaultAsync(m => m.ProgramId == id);
             if (program == null) return NotFound();
@@ -47,7 +48,7 @@ namespace AcademicGradingSystem.Controllers
         // POST: Program/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Models.Program program)
+        public async Task<IActionResult> Create(Models.AcademicProgram program)
         {
             if (ModelState.IsValid)
             {
@@ -63,7 +64,7 @@ namespace AcademicGradingSystem.Controllers
         {
             if (id == null) return NotFound();
 
-            var program = await _context.Programs.FindAsync(id);
+            var program = await _context.AcademicProgram.FindAsync(id);
             if (program == null) return NotFound();
 
             return View(program);
@@ -72,7 +73,7 @@ namespace AcademicGradingSystem.Controllers
         // POST: Program/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Models.Program program)
+        public async Task<IActionResult> Edit(int id, Models.AcademicProgram program)
         {
             if (id != program.ProgramId) return NotFound();
 
@@ -85,7 +86,7 @@ namespace AcademicGradingSystem.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Programs.Any(e => e.ProgramId == program.ProgramId))
+                    if (!_context.AcademicProgram.Any(e => e.ProgramId == program.ProgramId))
                         return NotFound();
                     else
                         throw;
@@ -100,7 +101,7 @@ namespace AcademicGradingSystem.Controllers
         {
             if (id == null) return NotFound();
 
-            var program = await _context.Programs
+            var program = await _context.AcademicProgram
                                         .FirstOrDefaultAsync(m => m.ProgramId == id);
             if (program == null) return NotFound();
 
@@ -112,10 +113,10 @@ namespace AcademicGradingSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var program = await _context.Programs.FindAsync(id);
+            var program = await _context.AcademicProgram.FindAsync(id);
             if (program != null)
             {
-                _context.Programs.Remove(program);
+                _context.AcademicProgram.Remove(program);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Index));

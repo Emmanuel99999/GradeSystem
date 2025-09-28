@@ -40,8 +40,5 @@ namespace AcademicGradingSystem.Models
 
         // If the user is a student → Enrollments they belong to
         public ICollection<Enrollment> Enrollments { get; set; }
-
-        // For audit logs
-        public ICollection<AuditLog> AuditLogs { get; set; }
     }
 }

@@ -30,7 +30,7 @@
     <div class="form-group">
         <label>Role</label>
         <select asp-for="RoleId" class="form-control"
-                asp-items="@(new SelectList(ViewData["Roles"], "RoleId", "RoleName"))"></select>
+                asp-items="@(new SelectList((IEnumerable<SelectListItem>)ViewData["Roles"], "RoleId", "RoleName"))"></select>
     </div>
     <div class="form-group">
         <label asp-for="IsActive"></label>
