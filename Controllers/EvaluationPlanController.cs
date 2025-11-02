@@ -7,11 +7,11 @@ using AcademicGradingSystem.Models;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class EvaluationPlanController : Controller
+    public class EvaluationApiPlanController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EvaluationPlanController(ApplicationDbContext context)
+        public EvaluationApiPlanController(ApplicationDbContext context)
         {
             _context = context;
         }

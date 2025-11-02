@@ -18,6 +18,7 @@ namespace AcademicGradingSystem.Models
         public string Code { get; set; } = string.Empty;
 
         // Foreign key a AcademicProgram
+        [Required]
         public int ProgramId { get; set; }
 
         [ForeignKey("ProgramId")]

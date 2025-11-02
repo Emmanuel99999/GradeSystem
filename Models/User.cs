@@ -2,43 +2,49 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace AcademicGradingSystem.Models
 {
+    [Index(nameof(Email), IsUnique = true)] // índice único para login
     public class User
     {
         [Key]
         public int UserId { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string FirstName { get; set; }
+        [Required, MaxLength(50)]
+        public string FirstName { get; set; } = string.Empty;
 
-        [Required]
-        [MaxLength(50)]
-        public string LastName { get; set; }
+        [Required, MaxLength(50)]
+        public string LastName { get; set; } = string.Empty;
 
-        [Required]
-        [EmailAddress]
-        [MaxLength(100)]
-        public string Email { get; set; }
+        [Required, EmailAddress, MaxLength(100)]
+        public string Email { get; set; } = string.Empty;
 
-        [Required]
-        public string PasswordHash { get; set; }
+        // Ajusta MaxLength si conoces el hash (bcrypt ~60, Argon2 depende; si usas Base64/Hex, 88/64 aprox.)
+        [Required, MaxLength(200)]
+        public string PasswordHash { get; set; } = string.Empty;
 
-        [Required]
-        [ForeignKey("Role")]
+        [Required, ForeignKey(nameof(Role))]
         public int RoleId { get; set; }
 
         public bool IsActive { get; set; } = true;
 
-        // Navigation properties
-        public Role Role { get; set; }
+        // Auditoría (opcional)
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
 
-        // If the user is a teacher → Courses they teach
-        public ICollection<Course> CoursesTaught { get; set; }
+        // Navegaciones
+        public Role Role { get; set; } = null!;
 
-        // If the user is a student → Enrollments they belong to
-        public ICollection<Enrollment> Enrollments { get; set; }
+        // Si es docente: cursos que dicta
+        public ICollection<Course> CoursesTaught { get; set; } = new List<Course>();
+
+        // Si es estudiante: sus matrículas
+        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+
+        // Conveniencia para mostrar en vistas
+        [NotMapped]
+        public string FullName => $"{FirstName} {LastName}";
     }
 }

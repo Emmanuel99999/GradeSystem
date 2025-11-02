@@ -7,11 +7,11 @@ using AcademicGradingSystem.Models;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class EnrollmentController : Controller
+    public class EnrollmentApiController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EnrollmentController(ApplicationDbContext context)
+        public EnrollmentApiController(ApplicationDbContext context)
         {
             _context = context;
         }

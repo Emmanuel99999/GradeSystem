@@ -29,9 +29,12 @@
     </div>
     <div class="form-group">
         <label>Role</label>
-        <select asp-for="RoleId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<SelectListItem>)ViewData["Roles"], "RoleId", "RoleName"))"></select>
+        <select asp-for="RoleId" class="form-control" asp-items="ViewBag.Roles">
+            <option value="">-- seleccione --</option>
+        </select>
+        <span asp-validation-for="RoleId" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label asp-for="IsActive"></label>
         <input asp-for="IsActive" type="checkbox" />

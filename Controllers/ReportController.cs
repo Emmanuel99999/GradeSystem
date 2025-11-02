@@ -8,11 +8,11 @@ using AcademicGradingSystem.Models;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class ReportController : Controller
+    public class ReportApiController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ReportController(ApplicationDbContext context)
+        public ReportApiController(ApplicationDbContext context)
         {
             _context = context;
         }

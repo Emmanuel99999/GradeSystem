@@ -4,11 +4,11 @@ using GradeSystem.Models;
 
 namespace GradeSystem.Controllers;
 
-public class HomeController : Controller
+public class HomeApiController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<HomeApiController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeApiController(ILogger<HomeApiController> logger)
     {
         _logger = logger;
     }

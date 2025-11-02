@@ -1,27 +1,23 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AcademicGradingSystem.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AcademicGradingSystem.Models;
+using Microsoft.AspNetCore.Mvc.Rendering; // 👈 importa esto
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class UserController : Controller
+    public class UserApiController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public UserController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        public UserApiController(ApplicationDbContext context) => _context = context;
 
         // GET: User
         public async Task<IActionResult> Index()
         {
-            var users = await _context.Users
-                                      .Include(u => u.Role)
-                                      .ToListAsync();
+            var users = await _context.Users.Include(u => u.Role).ToListAsync();
             return View(users);
         }
 
@@ -31,18 +27,21 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var user = await _context.Users
-                                     .Include(u => u.Role)
-                                     .FirstOrDefaultAsync(m => m.UserId == id);
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(m => m.UserId == id);
             if (user == null) return NotFound();
 
             return View(user);
         }
 
         // GET: User/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["Roles"] = _context.Roles.ToList();
-            return View();
+            ViewBag.Roles = new SelectList(
+                await _context.Roles.AsNoTracking().ToListAsync(),
+                "RoleId", "RoleName"
+            );
+            return View(new User());
         }
 
         // POST: User/Create
@@ -50,13 +49,20 @@ namespace AcademicGradingSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(User user)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ViewBag.Roles = new SelectList(
+                    await _context.Roles.AsNoTracking().ToListAsync(),
+                    "RoleId", "RoleName",
+                    user.RoleId // mantener selección
+                );
+                return View(user);
             }
-            return View(user);
+
+            // TODO: hashear la contraseña antes de guardar (no almacenar texto plano)
+            _context.Add(user);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: User/Edit/5
@@ -67,7 +73,11 @@ namespace AcademicGradingSystem.Controllers
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
-            ViewData["Roles"] = _context.Roles.ToList();
+            ViewBag.Roles = new SelectList(
+                await _context.Roles.AsNoTracking().ToListAsync(),
+                "RoleId", "RoleName",
+                user.RoleId
+            );
             return View(user);
         }
 
@@ -78,23 +88,29 @@ namespace AcademicGradingSystem.Controllers
         {
             if (id != user.UserId) return NotFound();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Users.Any(e => e.UserId == user.UserId))
-                        return NotFound();
-                    else
-                        throw;
-                }
-                return RedirectToAction(nameof(Index));
+                ViewBag.Roles = new SelectList(
+                    await _context.Roles.AsNoTracking().ToListAsync(),
+                    "RoleId", "RoleName",
+                    user.RoleId
+                );
+                return View(user);
             }
-            return View(user);
+
+            try
+            {
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.Users.AnyAsync(e => e.UserId == user.UserId))
+                    return NotFound();
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: User/Delete/5
@@ -103,8 +119,8 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var user = await _context.Users
-                                     .Include(u => u.Role)
-                                     .FirstOrDefaultAsync(m => m.UserId == id);
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(m => m.UserId == id);
             if (user == null) return NotFound();
 
             return View(user);

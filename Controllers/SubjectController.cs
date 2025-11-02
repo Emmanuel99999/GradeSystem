@@ -1,17 +1,18 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AcademicGradingSystem.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AcademicGradingSystem.Models;
+using Microsoft.AspNetCore.Mvc.Rendering; // 👈 IMPORTANTE
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class SubjectController : Controller
+    public class SubjectApiController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public SubjectController(ApplicationDbContext context)
+        public SubjectApiController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -41,10 +42,14 @@ namespace AcademicGradingSystem.Controllers
         }
 
         // GET: Subject/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["Programs"] = _context.AcademicProgram.ToList();
-            return View();
+            // 🔧 Enviar SelectList, no List<AcademicProgram>
+            var programs = await _context.AcademicProgram
+                                         .AsNoTracking()
+                                         .ToListAsync();
+            ViewBag.Programs = new SelectList(programs, "ProgramId", "ProgramName");
+            return View(new Subject());
         }
 
         // POST: Subject/Create
@@ -52,13 +57,19 @@ namespace AcademicGradingSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Subject subject)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(subject);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // 🔁 Re-poblar el combo cuando hay errores de validación
+                var programs = await _context.AcademicProgram
+                                             .AsNoTracking()
+                                             .ToListAsync();
+                ViewBag.Programs = new SelectList(programs, "ProgramId", "ProgramName", subject.ProgramId);
+                return View(subject);
             }
-            return View(subject);
+
+            _context.Add(subject);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Subject/Edit/5
@@ -69,7 +80,10 @@ namespace AcademicGradingSystem.Controllers
             var subject = await _context.Subjects.FindAsync(id);
             if (subject == null) return NotFound();
 
-            ViewData["Programs"] = _context.AcademicProgram.ToList();
+            var programs = await _context.AcademicProgram
+                                         .AsNoTracking()
+                                         .ToListAsync();
+            ViewBag.Programs = new SelectList(programs, "ProgramId", "ProgramName", subject.ProgramId);
             return View(subject);
         }
 
@@ -80,23 +94,27 @@ namespace AcademicGradingSystem.Controllers
         {
             if (id != subject.SubjectId) return NotFound();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(subject);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Subjects.Any(e => e.SubjectId == subject.SubjectId))
-                        return NotFound();
-                    else
-                        throw;
-                }
-                return RedirectToAction(nameof(Index));
+                var programs = await _context.AcademicProgram
+                                             .AsNoTracking()
+                                             .ToListAsync();
+                ViewBag.Programs = new SelectList(programs, "ProgramId", "ProgramName", subject.ProgramId);
+                return View(subject);
             }
-            return View(subject);
+
+            try
+            {
+                _context.Update(subject);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Subjects.Any(e => e.SubjectId == subject.SubjectId))
+                    return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Subject/Delete/5

@@ -160,21 +160,31 @@ namespace AcademicGradingSystem.Data
                 entity.Property(e => e.LastName).HasMaxLength(50).IsRequired();
                 entity.Property(e => e.Email).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.PasswordHash).IsRequired();
+
+                // 🔒 Índice único en Email
+                entity.HasIndex(e => e.Email).IsUnique();
+
                 entity.HasOne(e => e.Role)
                       .WithMany(r => r.Users)
                       .HasForeignKey(e => e.RoleId)
                       .OnDelete(DeleteBehavior.Restrict);
+
                 entity.HasMany(e => e.CoursesTaught)
                       .WithOne(c => c.Teacher)
                       .HasForeignKey(c => c.TeacherId)
                       .OnDelete(DeleteBehavior.Restrict);
+
                 entity.HasMany(e => e.Enrollments)
                       .WithOne(en => en.Student)
                       .HasForeignKey(en => en.StudentId)
                       .OnDelete(DeleteBehavior.Cascade);
-                // Si agregas AuditLog:
-                // entity.HasMany(e => e.AuditLogs).WithOne(al => al.User).HasForeignKey(al => al.UserId);
+
+                // Si agregas AuditLog más adelante:
+                // entity.HasMany(e => e.AuditLogs)
+                //       .WithOne(al => al.User)
+                //       .HasForeignKey(al => al.UserId);
             });
+
 
             // Si tienes AuditLog, agrégala aquí similar a las otras
 

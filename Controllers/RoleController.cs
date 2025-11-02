@@ -7,11 +7,11 @@ using AcademicGradingSystem.Models;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class RoleController : Controller
+    public class RoleApiController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public RoleController(ApplicationDbContext context)
+        public RoleApiController(ApplicationDbContext context)
         {
             _context = context;
         }
