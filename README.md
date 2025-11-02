@@ -25,15 +25,14 @@ El sistema permite registrar estudiantes, asignaturas y programas académicos; g
 
 ---
 
-## 🎯 Objetivos Específicos
-
-1. Diseñar una plataforma digital para registrar estudiantes, asignaturas y calificaciones de forma estructurada y segura.  
-2. Automatizar el cálculo de promedios y notas finales para reducir errores humanos.  
-3. Generar reportes académicos en PDF y facilitar la comunicación entre docentes y estudiantes.  
-4. Centralizar la información académica para un acceso rápido y confiable.  
-5. Permitir el seguimiento detallado del rendimiento estudiantil.  
-6. Reducir la carga administrativa del docente en la gestión de calificaciones.  
-7. Garantizar la integridad y confidencialidad de los datos académicos mediante controles de acceso y seguridad.
+## 🎯 Objetivos Específicos 
+Fase del Ciclo de Desarrollo	Objetivo Específico
+1. Análisis	Identificar los requerimientos funcionales y no funcionales del sistema de notas académicas mediante la especificación de casos de uso y entidades del dominio.
+2. Diseño	Diseñar la arquitectura en capas (MVC) que permita el desacoplamiento entre la lógica de negocio, la capa de datos y la interfaz de usuario, incluyendo la definición de interfaces y DTOs.
+3. Implementación	Implementar el caso de uso de gestión de calificaciones utilizando Entity Framework Core como ORM para mapear correctamente las entidades y relaciones entre tablas.
+4. Integración	Integrar los controladores MVC y la API REST para exponer los endpoints de negocio, documentando los servicios con Swagger / OpenAPI.
+5. Pruebas y Validación	Validar la persistencia de datos, el funcionamiento de los cálculos de promedios y la correcta respuesta de los endpoints mediante pruebas funcionales y de integración.
+6. Despliegue y Mantenimiento	Configurar la base de datos en SQL Server Express, habilitar migraciones automáticas y garantizar la portabilidad del sistema mediante contenedores o scripts estándar.
 
 ---
 
