@@ -1,31 +1,32 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using GradeSystem.Models;
+using AcademicGradingSystem.Models;
 
-namespace GradeSystem.Controllers;
-
-public class HomeApiController : Controller
+namespace AcademicGradingSystem.Controllers
 {
-    private readonly ILogger<HomeApiController> _logger;
-
-    public HomeApiController(ILogger<HomeApiController> logger)
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        private readonly ILogger<HomeController> _logger;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        public HomeController(ILogger<HomeController> logger)
+        {
+            _logger = logger;
+        }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        public IActionResult Index()
+        {
+            return View(); // Buscará Views/Home/Index.cshtml
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new User { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        public IActionResult Privacy()
+        {
+            return View(); // Views/Home/Privacy.cshtml si existe
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }

@@ -42,11 +42,15 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// 🔹 Rutas MVC (Views)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Aplicar migraciones automáticamente (SOLO PARA DESARROLLO)
+// 🔹 Rutas API (atributo-based)
+app.MapControllers();
+
+// Aplicar migraciones automáticamente 
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())

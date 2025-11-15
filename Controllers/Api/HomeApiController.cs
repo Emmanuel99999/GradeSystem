@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace GradeSystem.Controllers.Api
+namespace AcademicGradingSystem.Controllers.Api
 {
     [ApiController]
     [Route("api/[controller]")]
