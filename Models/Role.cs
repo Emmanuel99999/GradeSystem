@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -16,6 +17,7 @@ namespace AcademicGradingSystem.Models
         public string Description { get; set; }
 
         // Navigation
+        [ValidateNever]
         public ICollection<User> Users { get; set; }
     }
 }

@@ -1,2 +1,27 @@
 @model AcademicGradingSystem.Models.Grade
-<h2>Grade Details</h2><p>Student: @Model.Student.FirstName @Model.Student.LastName</p><p>Score: @Model.Score</p><p>Plan: @Model.EvaluationPlan.ActivityName</p><p>Date: @Model.DateRecorded</p>
+
+@{
+    ViewData["Title"] = "Grade Details";
+}
+
+<h2>Grade Details</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-2">Student</dt>
+            <dd class="col-sm-10">@Model.Student?.Email</dd>
+
+            <dt class="col-sm-2">Activity</dt>
+            <dd class="col-sm-10">@Model.EvaluationPlan?.ActivityName</dd>
+
+            <dt class="col-sm-2">Score</dt>
+            <dd class="col-sm-10">@Model.Score</dd>
+        </dl>
+    </div>
+</div>
+
+<p class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.GradeId" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to list</a>
+</p>

@@ -4,20 +4,27 @@ using AcademicGradingSystem.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AcademicGradingSystem.Models;
-using Microsoft.AspNetCore.Mvc.Rendering; // 👈 importa esto
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class UserApiController : Controller
+    public class UserController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public UserApiController(ApplicationDbContext context) => _context = context;
+        public UserController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         // GET: User
         public async Task<IActionResult> Index()
         {
-            var users = await _context.Users.Include(u => u.Role).ToListAsync();
+            var users = await _context.Users
+                .Include(u => u.Role)
+                .ToListAsync();
+
             return View(users);
         }
 
@@ -29,6 +36,7 @@ namespace AcademicGradingSystem.Controllers
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(m => m.UserId == id);
+
             if (user == null) return NotFound();
 
             return View(user);
@@ -41,6 +49,7 @@ namespace AcademicGradingSystem.Controllers
                 await _context.Roles.AsNoTracking().ToListAsync(),
                 "RoleId", "RoleName"
             );
+
             return View(new User());
         }
 
@@ -54,14 +63,16 @@ namespace AcademicGradingSystem.Controllers
                 ViewBag.Roles = new SelectList(
                     await _context.Roles.AsNoTracking().ToListAsync(),
                     "RoleId", "RoleName",
-                    user.RoleId // mantener selección
+                    user.RoleId
                 );
+
                 return View(user);
             }
 
-            // TODO: hashear la contraseña antes de guardar (no almacenar texto plano)
+            // ⚠ RECOMENDACIÓN: Aquí deberías hashear la contraseña antes de guardar.
             _context.Add(user);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -78,6 +89,7 @@ namespace AcademicGradingSystem.Controllers
                 "RoleId", "RoleName",
                 user.RoleId
             );
+
             return View(user);
         }
 
@@ -95,6 +107,7 @@ namespace AcademicGradingSystem.Controllers
                     "RoleId", "RoleName",
                     user.RoleId
                 );
+
                 return View(user);
             }
 
@@ -107,6 +120,7 @@ namespace AcademicGradingSystem.Controllers
             {
                 if (!await _context.Users.AnyAsync(e => e.UserId == user.UserId))
                     return NotFound();
+
                 throw;
             }
 
@@ -121,6 +135,7 @@ namespace AcademicGradingSystem.Controllers
             var user = await _context.Users
                 .Include(u => u.Role)
                 .FirstOrDefaultAsync(m => m.UserId == id);
+
             if (user == null) return NotFound();
 
             return View(user);
@@ -132,11 +147,13 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var user = await _context.Users.FindAsync(id);
+
             if (user != null)
             {
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
     }

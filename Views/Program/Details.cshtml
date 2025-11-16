@@ -4,28 +4,45 @@
     ViewData["Title"] = "Program Details";
 }
 
-<h2>Program Details</h2>
+<h2 class="mb-4">Program Details</h2>
 
-<div>
-    <h4>@Model.ProgramName</h4>
-    <p>@Model.Description</p>
+<div class="card mb-4">
+    <div class="card-body">
+        <h4 class="card-title">@Model.ProgramName</h4>
+        <p class="card-text">@Model.Description</p>
+    </div>
+</div>
 
+<div class="mb-4">
     <h5>Subjects</h5>
     @if (Model.Subjects != null && Model.Subjects.Any())
     {
-        <ul>
-        @foreach (var s in Model.Subjects)
-        {
-            <li>@s.Code - @s.SubjectName (@s.Code credits)</li>
-        }
-        </ul>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Credits</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var s in Model.Subjects)
+            {
+                <tr>
+                    <td>@s.Code</td>
+                    <td>@s.SubjectName</td>
+                </tr>
+            }
+            </tbody>
+        </table>
     }
     else
     {
-        <p>No subjects registered.</p>
+        <p class="text-muted">No subjects registered.</p>
     }
 </div>
-<p>
-    <a asp-action="Edit" asp-route-id="@Model.ProgramId" class="btn btn-warning">Edit</a> |
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ProgramId" class="btn btn-warning me-2">Edit</a>
     <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</p>
+</div>

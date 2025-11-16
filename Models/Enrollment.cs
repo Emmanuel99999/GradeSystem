@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,7 +20,9 @@ namespace AcademicGradingSystem.Models
         public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
         // Navigation
+        [ValidateNever]
         public User Student { get; set; }
+        [ValidateNever]
         public Course Course { get; set; }
     }
 }

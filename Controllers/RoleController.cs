@@ -7,11 +7,11 @@ using AcademicGradingSystem.Models;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class RoleApiController : Controller
+    public class RoleController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public RoleApiController(ApplicationDbContext context)
+        public RoleController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -20,8 +20,9 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var roles = await _context.Roles
-                                      .OrderBy(r => r.RoleName)
-                                      .ToListAsync();
+                .OrderBy(r => r.RoleName)
+                .ToListAsync();
+
             return View(roles);
         }
 
@@ -29,10 +30,13 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
+
             var role = await _context.Roles
-                                     .Include(r => r.Users)
-                                     .FirstOrDefaultAsync(r => r.RoleId == id);
+                .Include(r => r.Users)
+                .FirstOrDefaultAsync(r => r.RoleId == id);
+
             if (role == null) return NotFound();
+
             return View(role);
         }
 
@@ -53,6 +57,7 @@ namespace AcademicGradingSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(role);
         }
 
@@ -60,8 +65,10 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
+
             var role = await _context.Roles.FindAsync(id);
             if (role == null) return NotFound();
+
             return View(role);
         }
 
@@ -86,8 +93,10 @@ namespace AcademicGradingSystem.Controllers
                     else
                         throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(role);
         }
 
@@ -95,9 +104,12 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
+
             var role = await _context.Roles
-                                     .FirstOrDefaultAsync(r => r.RoleId == id);
+                .FirstOrDefaultAsync(r => r.RoleId == id);
+
             if (role == null) return NotFound();
+
             return View(role);
         }
 
@@ -107,11 +119,13 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var role = await _context.Roles.FindAsync(id);
+
             if (role != null)
             {
                 _context.Roles.Remove(role);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
     }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -25,7 +26,9 @@ namespace AcademicGradingSystem.Models
         public DateTime DueDate { get; set; }
 
         // Navigation
+        [ValidateNever]
         public Course Course { get; set; }
+        [ValidateNever]
         public ICollection<Grade> Grades { get; set; }
     }
 }

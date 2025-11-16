@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 
 namespace AcademicGradingSystem.Models
 {
@@ -19,7 +21,8 @@ namespace AcademicGradingSystem.Models
         [Required]
         public DateTime EndDate { get; set; }
 
-        // Navigation: one period has many courses
-        public ICollection<Course> Courses { get; set; }
+        [ValidateNever]  
+        public ICollection<Course> Courses { get; set; } = new List<Course>();
+
     }
 }

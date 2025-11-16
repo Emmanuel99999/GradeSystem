@@ -1,17 +1,18 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AcademicGradingSystem.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AcademicGradingSystem.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;  
+using Microsoft.EntityFrameworkCore;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class CourseApiController : Controller
+    public class CourseController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CourseApiController(ApplicationDbContext context)
+        public CourseController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -20,11 +21,12 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var courses = await _context.Courses
-                                        .Include(c => c.Subject)
-                                        .Include(c => c.AcademicPeriod)
-                                        .Include(c => c.Teacher)
-                                        .OrderBy(c => c.CourseName)
-                                        .ToListAsync();
+                .Include(c => c.Subject)
+                .Include(c => c.AcademicPeriod)
+                .Include(c => c.Teacher)
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
             return View(courses);
         }
 
@@ -34,23 +36,47 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var course = await _context.Courses
-                                       .Include(c => c.Subject)
-                                       .Include(c => c.AcademicPeriod)
-                                       .Include(c => c.Teacher)
-                                       .Include(c => c.Enrollments)
-                                       .FirstOrDefaultAsync(m => m.CourseId == id);
+                .Include(c => c.Subject)
+                .Include(c => c.AcademicPeriod)
+                .Include(c => c.Teacher)
+                .Include(c => c.Enrollments)
+                .FirstOrDefaultAsync(m => m.CourseId == id);
+
             if (course == null) return NotFound();
 
             return View(course);
         }
 
-        // GET: Course/Create
-        public IActionResult Create()
+        // 🔹 Método auxiliar para cargar combos
+        private async Task LoadCombosAsync(Course? course = null)
         {
-            ViewData["Subjects"] = _context.Subjects.ToList();
-            ViewData["Periods"] = _context.AcademicPeriods.ToList();
-            ViewData["Teachers"] = _context.Users.Where(u => u.Role.RoleName == "Teacher").ToList();
-            return View();
+            var subjects = await _context.Subjects
+                .AsNoTracking()
+                .OrderBy(s => s.SubjectName)
+                .ToListAsync();
+
+            var periods = await _context.AcademicPeriods
+                .AsNoTracking()
+                .OrderBy(p => p.StartDate)
+                .ToListAsync();
+
+            var teachers = await _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.Role.RoleName == "Docente" || u.Role.RoleName == "Teacher") 
+                .AsNoTracking()
+                .OrderBy(u => u.FirstName)
+                .ToListAsync();
+
+            ViewBag.Subjects = new SelectList(subjects, "SubjectId", "SubjectName", course?.SubjectId);
+            ViewBag.Periods = new SelectList(periods, "PeriodId", "Name", course?.PeriodId);
+            ViewBag.Teachers = new SelectList(teachers, "UserId", "FirstName", course?.TeacherId);
+        }
+
+        // GET: Course/Create
+        public async Task<IActionResult> Create()
+        {
+            await LoadCombosAsync();
+            return View(new Course());
         }
 
         // POST: Course/Create
@@ -58,13 +84,15 @@ namespace AcademicGradingSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Course course)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(course);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                await LoadCombosAsync(course);
+                return View(course);
             }
-            return View(course);
+
+            _context.Courses.Add(course);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Course/Edit/5
@@ -75,9 +103,7 @@ namespace AcademicGradingSystem.Controllers
             var course = await _context.Courses.FindAsync(id);
             if (course == null) return NotFound();
 
-            ViewData["Subjects"] = _context.Subjects.ToList();
-            ViewData["Periods"] = _context.AcademicPeriods.ToList();
-            ViewData["Teachers"] = _context.Users.Where(u => u.Role.RoleName == "Teacher").ToList();
+            await LoadCombosAsync(course);
             return View(course);
         }
 
@@ -88,23 +114,25 @@ namespace AcademicGradingSystem.Controllers
         {
             if (id != course.CourseId) return NotFound();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(course);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Courses.Any(e => e.CourseId == course.CourseId))
-                        return NotFound();
-                    else
-                        throw;
-                }
-                return RedirectToAction(nameof(Index));
+                await LoadCombosAsync(course);
+                return View(course);
             }
-            return View(course);
+
+            try
+            {
+                _context.Update(course);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Courses.Any(e => e.CourseId == course.CourseId))
+                    return NotFound();
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Course/Delete/5
@@ -113,10 +141,11 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var course = await _context.Courses
-                                       .Include(c => c.Subject)
-                                       .Include(c => c.AcademicPeriod)
-                                       .Include(c => c.Teacher)
-                                       .FirstOrDefaultAsync(m => m.CourseId == id);
+                .Include(c => c.Subject)
+                .Include(c => c.AcademicPeriod)
+                .Include(c => c.Teacher)
+                .FirstOrDefaultAsync(m => m.CourseId == id);
+
             if (course == null) return NotFound();
 
             return View(course);
@@ -133,6 +162,7 @@ namespace AcademicGradingSystem.Controllers
                 _context.Courses.Remove(course);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
     }

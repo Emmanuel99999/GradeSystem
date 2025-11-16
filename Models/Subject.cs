@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 
 namespace AcademicGradingSystem.Models
 {
@@ -22,7 +24,9 @@ namespace AcademicGradingSystem.Models
         public int ProgramId { get; set; }
 
         [ForeignKey("ProgramId")]
+        [ValidateNever]  
         public AcademicProgram Program { get; set; } = null!;
+
 
         public ICollection<Course> Courses { get; set; } = new List<Course>();
     }

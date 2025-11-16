@@ -7,11 +7,11 @@ using AcademicGradingSystem.Models;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class ProgramApiController : Controller
+    public class ProgramController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ProgramApiController(ApplicationDbContext context)
+        public ProgramController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -19,11 +19,12 @@ namespace AcademicGradingSystem.Controllers
         // GET: Program
         public async Task<IActionResult> Index()
         {
-            var AcademicProgram = await _context.AcademicProgram
-                                         .Include(p => p.Subjects)
-                                         .OrderBy(p => p.ProgramName)
-                                         .ToListAsync();
-            return View(AcademicProgram);
+            var programs = await _context.AcademicProgram
+                .Include(p => p.Subjects)
+                .OrderBy(p => p.ProgramName)
+                .ToListAsync();
+
+            return View(programs);
         }
 
         // GET: Program/Details/5
@@ -32,8 +33,9 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var program = await _context.AcademicProgram
-                                        .Include(p => p.Subjects)
-                                        .FirstOrDefaultAsync(m => m.ProgramId == id);
+                .Include(p => p.Subjects)
+                .FirstOrDefaultAsync(m => m.ProgramId == id);
+
             if (program == null) return NotFound();
 
             return View(program);
@@ -48,7 +50,7 @@ namespace AcademicGradingSystem.Controllers
         // POST: Program/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Models.AcademicProgram program)
+        public async Task<IActionResult> Create(AcademicProgram program)
         {
             if (ModelState.IsValid)
             {
@@ -56,6 +58,7 @@ namespace AcademicGradingSystem.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(program);
         }
 
@@ -73,7 +76,7 @@ namespace AcademicGradingSystem.Controllers
         // POST: Program/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Models.AcademicProgram program)
+        public async Task<IActionResult> Edit(int id, AcademicProgram program)
         {
             if (id != program.ProgramId) return NotFound();
 
@@ -91,8 +94,10 @@ namespace AcademicGradingSystem.Controllers
                     else
                         throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(program);
         }
 
@@ -102,7 +107,8 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var program = await _context.AcademicProgram
-                                        .FirstOrDefaultAsync(m => m.ProgramId == id);
+                .FirstOrDefaultAsync(m => m.ProgramId == id);
+
             if (program == null) return NotFound();
 
             return View(program);
@@ -114,11 +120,13 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var program = await _context.AcademicProgram.FindAsync(id);
+
             if (program != null)
             {
                 _context.AcademicProgram.Remove(program);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
     }

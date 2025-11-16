@@ -1,2 +1,37 @@
 @model IEnumerable<AcademicGradingSystem.Models.Grade>
-<h2>Grades</h2><a asp-action="Create" class="btn btn-primary">New Grade</a><table class="table"><thead><tr><th>Student</th><th>Plan</th><th>Score</th><th>Date</th><th></th></tr></thead><tbody>@foreach(var g in Model){<tr><td>@g.Student.FirstName @g.Student.LastName</td><td>@g.EvaluationPlan.ActivityName</td><td>@g.Score</td><td>@g.DateRecorded</td><td><a asp-action="Edit" asp-route-id=@g.GradeId>Edit</a> | <a asp-action="Details" asp-route-id=@g.GradeId>Details</a> | <a asp-action="Delete" asp-route-id=@g.GradeId>Delete</a></td></tr>}</tbody></table>
+
+@{
+    ViewData["Title"] = "Grades";
+}
+
+<h2>Grades</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Grade</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Activity</th>
+            <th>Score</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Student?.Email</td>
+                <td>@item.EvaluationPlan?.ActivityName</td>
+                <td>@item.Score</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.GradeId" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@item.GradeId" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.GradeId" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

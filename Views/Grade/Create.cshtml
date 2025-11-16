@@ -1,18 +1,58 @@
 @model AcademicGradingSystem.Models.Grade
+
+@{
+    ViewData["Title"] = "Create Grade";
+}
+
+<h2>Create Grade</h2>
+
 <form asp-action="Create" method="post">
-    <div class="form-group">
-        <label>Student</label>
-        <select asp-for="StudentId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.User>)ViewData["Students"], "User Id", "Email"))"></select>
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label asp-for="StudentId" class="form-label">Student</label>
+        <select asp-for="StudentId" class="form-select" asp-items="ViewBag.Students">
+            <option value="">-- Select student --</option>
+        </select>
+        <span asp-validation-for="StudentId" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label>Plan</label>
-        <select asp-for="PlanId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.EvaluationPlan>)ViewData["Plans"], "PlanId", "ActivityName"))"></select>
+
+    <div class="mb-3">
+        <label asp-for="PlanId" class="form-label">Plan / Activity</label>
+        <select asp-for="PlanId" class="form-select" asp-items="ViewBag.Plans">
+            <option value="">-- Select activity --</option>
+        </select>
+        <span asp-validation-for="PlanId" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label>Score</label>
+
+    <div class="mb-3">
+        <label asp-for="Score" class="form-label"></label>
         <input asp-for="Score" class="form-control" />
+        <span asp-validation-for="Score" class="text-danger"></span>
     </div>
-    <button type="submit">Save</button>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to list</a>
 </form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-3">
+        <strong>Errores del modelo:</strong>
+        <ul>
+            @foreach (var state in ViewData.ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    <li><strong>@state.Key</strong>: @error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}

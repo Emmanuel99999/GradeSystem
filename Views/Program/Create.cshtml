@@ -4,20 +4,41 @@
     ViewData["Title"] = "Create Program";
 }
 
-<h2>Create Program</h2>
+<h2 class="mb-4">Create Program</h2>
 
-<form asp-action="Create" method="post">
+<form asp-action="Create" method="post" class="needs-validation" novalidate>
     @Html.AntiForgeryToken()
-    <div class="form-group">
-        <label asp-for="ProgramName"></label>
-        <input asp-for="ProgramName" class="form-control" />
+    <div class="form-group mb-3">
+        <label asp-for="ProgramName" class="form-label"></label>
+        <input asp-for="ProgramName" class="form-control" placeholder="Enter program name" required />
         <span asp-validation-for="ProgramName" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
+    <div class="form-group mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Enter program description" required></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-3">
+        <strong>Errores del modelo:</strong>
+        <ul>
+            @foreach (var state in ViewData.ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    <li><strong>@state.Key</strong>: @error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}

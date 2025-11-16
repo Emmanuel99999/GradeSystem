@@ -1,30 +1,68 @@
 @model AcademicGradingSystem.Models.Course
+
 @{
     ViewData["Title"] = "Create Course";
 }
+
 <h2>Create Course</h2>
+
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <div class="form-group">
         <label asp-for="CourseName"></label>
         <input asp-for="CourseName" class="form-control" />
         <span asp-validation-for="CourseName" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label>Subject</label>
-        <select asp-for="SubjectId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.Subject>)ViewData["Subjects"], "SubjectId", "SubjectName"))"></select>
+        <select asp-for="SubjectId"
+                class="form-control"
+                asp-items="ViewBag.Subjects">
+            <option value="">-- Select subject --</option>
+        </select>
+        <span asp-validation-for="SubjectId" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label>Academic Period</label>
-        <select asp-for="PeriodId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.AcademicPeriod>)ViewData["Periods"], "PeriodId", "Name"))"></select>
+        <select asp-for="PeriodId"
+                class="form-control"
+                asp-items="ViewBag.Periods">
+            <option value="">-- Select period --</option>
+        </select>
+        <span asp-validation-for="PeriodId" class="text-danger"></span>
     </div>
+
     <div class="form-group">
         <label>Teacher</label>
-        <select asp-for="TeacherId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.User>)ViewData["Teachers"], "User Id", "Email"))"></select>
+        <select asp-for="TeacherId"
+                class="form-control"
+                asp-items="ViewBag.Teachers">
+            <option value="">-- Select teacher --</option>
+        </select>
+        <span asp-validation-for="TeacherId" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-3">
+        <strong>Errores del modelo:</strong>
+        <ul>
+            @foreach (var state in ViewData.ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    <li><strong>@state.Key</strong>: @error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}

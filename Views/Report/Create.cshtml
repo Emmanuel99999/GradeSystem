@@ -1,19 +1,48 @@
 @{
     ViewData["Title"] = "Generate Report";
 }
+
 <h2>Generate Report</h2>
+
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
-    <div class="form-group">
-        <label>Student</label>
-        <select name="StudentId" class="form-control"
-                asp-items="@(new SelectList(ViewData["Students"] as System.Collections.IEnumerable, "UserId", "Email"))"></select>
+
+    <div class="form-group mb-3">
+        <label for="StudentId">Student</label>
+        <select id="StudentId"
+                name="StudentId"
+                class="form-control"
+                asp-items="ViewBag.Students">
+            <option value="">-- Select student --</option>
+        </select>
     </div>
-    <div class="form-group">
-        <label>Course</label>
-        <select name="CourseId" class="form-control"
-                asp-items="@(new SelectList(ViewData["Courses"] as System.Collections.IEnumerable, "CourseId", "CourseName"))"></select>
+
+    <div class="form-group mb-3">
+        <label for="CourseId">Course</label>
+        <select id="CourseId"
+                name="CourseId"
+                class="form-control"
+                asp-items="ViewBag.Courses">
+            <option value="">-- Select course --</option>
+        </select>
     </div>
+
     <button type="submit" class="btn btn-primary">Generate</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-3">
+        <strong>Errores del modelo:</strong>
+        <ul>
+            @foreach (var state in ViewData.ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    <li><strong>@state.Key</strong>: @error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}

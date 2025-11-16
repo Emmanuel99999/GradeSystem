@@ -1,18 +1,19 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AcademicGradingSystem.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using AcademicGradingSystem.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering; 
+using Microsoft.EntityFrameworkCore;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class ReportApiController : Controller
+    public class ReportController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ReportApiController(ApplicationDbContext context)
+        public ReportController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -21,11 +22,12 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var reports = await _context.Reports
-                                        .Include(r => r.Student)
-                                        .Include(r => r.Course)
-                                            .ThenInclude(c => c.Subject)
-                                        .OrderByDescending(r => r.GeneratedAt)
-                                        .ToListAsync();
+                .Include(r => r.Student)
+                .Include(r => r.Course)
+                    .ThenInclude(c => c.Subject)
+                .OrderByDescending(r => r.GeneratedAt)
+                .ToListAsync();
+
             return View(reports);
         }
 
@@ -35,89 +37,116 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var report = await _context.Reports
-                                       .Include(r => r.Student)
-                                       .Include(r => r.Course).ThenInclude(c => c.Subject)
-                                       .FirstOrDefaultAsync(m => m.ReportId == id);
+                .Include(r => r.Student)
+                .Include(r => r.Course)
+                    .ThenInclude(c => c.Subject)
+                .FirstOrDefaultAsync(m => m.ReportId == id);
+
             if (report == null) return NotFound();
 
-            // Bring breakdown for display
+            // Breakdown: detalles del cálculo
             var breakdown = await _context.EvaluationPlans
-                                          .Where(p => p.CourseId == report.CourseId)
-                                          .Select(p => new
-                                          {
-                                              p.ActivityName,
-                                              p.Weight,
-                                              Score = _context.Grades
-                                                  .Where(g => g.PlanId == p.PlanId && g.StudentId == report.StudentId)
-                                                  .OrderByDescending(g => g.DateRecorded)
-                                                  .Select(g => (double?)g.Score)
-                                                  .FirstOrDefault()
-                                          }).ToListAsync();
+                .Where(p => p.CourseId == report.CourseId)
+                .Select(p => new
+                {
+                    p.ActivityName,
+                    p.Weight,
+                    Score = _context.Grades
+                        .Where(g => g.PlanId == p.PlanId && g.StudentId == report.StudentId)
+                        .OrderByDescending(g => g.DateRecorded)
+                        .Select(g => (double?)g.Score)
+                        .FirstOrDefault()
+                })
+                .ToListAsync();
 
             ViewData["Breakdown"] = breakdown;
+
             return View(report);
         }
 
-        // GET: Report/Create  (Generate form)
-        public IActionResult Create()
+        // 🔹 Método auxiliar para combos (Students + Courses)
+        private async Task LoadCombosAsync(int? studentId = null, int? courseId = null)
         {
-            ViewData["Students"] = _context.Users
-                                            .Include(u => u.Role)
-                                            .Where(u => u.Role.RoleName == "Student")
-                                            .OrderBy(u => u.FirstName)
-                                            .ToList();
-            ViewData["Courses"] = _context.Courses
-                                           .Include(c => c.Subject)
-                                           .OrderBy(c => c.CourseName)
-                                           .ToList();
+            var students = await _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.Role.RoleName == "Student" || u.Role.RoleName == "Estudiante") //ajusta al texto real
+                .AsNoTracking()
+                .OrderBy(u => u.FirstName)
+                .ThenBy(u => u.LastName)
+                .ToListAsync();
+
+            var courses = await _context.Courses
+                .Include(c => c.Subject)
+                .AsNoTracking()
+                .OrderBy(c => c.CourseName)
+                .ToListAsync();
+
+            ViewBag.Students = new SelectList(
+                students.Select(s => new
+                {
+                    s.UserId,
+                    FullName = s.FirstName + " " + s.LastName + " (" + s.Email + ")"
+                }),
+                "UserId",
+                "FullName",
+                studentId
+            );
+
+            ViewBag.Courses = new SelectList(
+                courses.Select(c => new
+                {
+                    c.CourseId,
+                    Text = c.CourseName + " - " + c.Subject.SubjectName
+                }),
+                "CourseId",
+                "Text",
+                courseId
+            );
+        }
+
+        // GET: Report/Create
+        public async Task<IActionResult> Create()
+        {
+            await LoadCombosAsync();
             return View();
         }
 
-        // POST: Report/Create (Generate and persist)
+        // POST: Report/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int StudentId, int CourseId)
         {
-            // Compute final grade from plans and grades
             var plans = await _context.EvaluationPlans
-                                      .Where(p => p.CourseId == CourseId)
-                                      .ToListAsync();
+                .Where(p => p.CourseId == CourseId)
+                .ToListAsync();
 
+            // Validaciones
             if (!plans.Any())
-            {
-                ModelState.AddModelError(string.Empty, "The selected course has no evaluation plan.");
-            }
+                ModelState.AddModelError(string.Empty, "El curso seleccionado no tiene plan de evaluación.");
 
-            // Sum weights (expecting 100)
             double totalWeight = plans.Sum(p => p.Weight);
             if (totalWeight <= 0)
-            {
-                ModelState.AddModelError(string.Empty, "Invalid evaluation plan weights.");
-            }
+                ModelState.AddModelError(string.Empty, "Los pesos del plan de evaluación no son válidos.");
 
             if (!ModelState.IsValid)
             {
-                // Reload dropdowns
-                ViewData["Students"] = _context.Users.Include(u => u.Role).Where(u => u.Role.RoleName == "Student").ToList();
-                ViewData["Courses"] = _context.Courses.Include(c => c.Subject).ToList();
+                await LoadCombosAsync(StudentId, CourseId);
                 return View();
             }
 
-            // Weighted score using latest grade per plan
+            // Cálculo del puntaje final
             double finalScore = 0.0;
+
             foreach (var plan in plans)
             {
                 var score = await _context.Grades
-                                          .Where(g => g.PlanId == plan.PlanId && g.StudentId == StudentId)
-                                          .OrderByDescending(g => g.DateRecorded)
-                                          .Select(g => (double?)g.Score)
-                                          .FirstOrDefaultAsync();
+                    .Where(g => g.PlanId == plan.PlanId && g.StudentId == StudentId)
+                    .OrderByDescending(g => g.DateRecorded)
+                    .Select(g => (double?)g.Score)
+                    .FirstOrDefaultAsync();
 
                 if (score.HasValue)
-                {
-                    finalScore += (score.Value * (plan.Weight / totalWeight));
-                }
-                // If missing grade, treat as zero contribution (or adjust as needed)
+                    finalScore += score.Value * (plan.Weight / totalWeight);
             }
 
             var report = new Report
@@ -140,9 +169,10 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var report = await _context.Reports
-                                       .Include(r => r.Student)
-                                       .Include(r => r.Course)
-                                       .FirstOrDefaultAsync(m => m.ReportId == id);
+                .Include(r => r.Student)
+                .Include(r => r.Course)
+                .FirstOrDefaultAsync(m => m.ReportId == id);
+
             if (report == null) return NotFound();
 
             return View(report);
@@ -154,11 +184,13 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var report = await _context.Reports.FindAsync(id);
+
             if (report != null)
             {
                 _context.Reports.Remove(report);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
     }

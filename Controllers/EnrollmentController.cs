@@ -7,11 +7,11 @@ using AcademicGradingSystem.Models;
 
 namespace AcademicGradingSystem.Controllers
 {
-    public class EnrollmentApiController : Controller
+    public class EnrollmentController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EnrollmentApiController(ApplicationDbContext context)
+        public EnrollmentController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -20,12 +20,13 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> Index()
         {
             var enrollments = await _context.Enrollments
-                                            .Include(e => e.Student)
-                                            .ThenInclude(s => s.Role)
-                                            .Include(e => e.Course)
-                                            .ThenInclude(c => c.Subject)
-                                            .OrderByDescending(e => e.RegistrationDate)
-                                            .ToListAsync();
+                .Include(e => e.Student)
+                    .ThenInclude(s => s.Role)
+                .Include(e => e.Course)
+                    .ThenInclude(c => c.Subject)
+                .OrderByDescending(e => e.RegistrationDate)
+                .ToListAsync();
+
             return View(enrollments);
         }
 
@@ -35,10 +36,11 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var enrollment = await _context.Enrollments
-                                           .Include(e => e.Student)
-                                           .Include(e => e.Course)
-                                               .ThenInclude(c => c.Subject)
-                                           .FirstOrDefaultAsync(m => m.EnrollmentId == id);
+                .Include(e => e.Student)
+                .Include(e => e.Course)
+                    .ThenInclude(c => c.Subject)
+                .FirstOrDefaultAsync(m => m.EnrollmentId == id);
+
             if (enrollment == null) return NotFound();
 
             return View(enrollment);
@@ -48,12 +50,14 @@ namespace AcademicGradingSystem.Controllers
         public IActionResult Create()
         {
             ViewData["Students"] = _context.Users
-                                           .Include(u => u.Role)
-                                           .Where(u => u.Role.RoleName == "Student")
-                                           .ToList();
+                .Include(u => u.Role)
+                .Where(u => u.Role.RoleName == "Student")
+                .ToList();
+
             ViewData["Courses"] = _context.Courses
-                                          .Include(c => c.Subject)
-                                          .ToList();
+                .Include(c => c.Subject)
+                .ToList();
+
             return View();
         }
 
@@ -64,15 +68,28 @@ namespace AcademicGradingSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Prevent duplicate enrollment
-                bool exists = await _context.Enrollments.AnyAsync(e => e.StudentId == enrollment.StudentId && e.CourseId == enrollment.CourseId);
+                bool exists = await _context.Enrollments
+                    .AnyAsync(e => e.StudentId == enrollment.StudentId && e.CourseId == enrollment.CourseId);
+
                 if (!exists)
                 {
                     _context.Add(enrollment);
                     await _context.SaveChangesAsync();
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
+            // Recargar combos si hay error
+            ViewData["Students"] = _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.Role.RoleName == "Student")
+                .ToList();
+
+            ViewData["Courses"] = _context.Courses
+                .Include(c => c.Subject)
+                .ToList();
+
             return View(enrollment);
         }
 
@@ -85,12 +102,14 @@ namespace AcademicGradingSystem.Controllers
             if (enrollment == null) return NotFound();
 
             ViewData["Students"] = _context.Users
-                                           .Include(u => u.Role)
-                                           .Where(u => u.Role.RoleName == "Student")
-                                           .ToList();
+                .Include(u => u.Role)
+                .Where(u => u.Role.RoleName == "Student")
+                .ToList();
+
             ViewData["Courses"] = _context.Courses
-                                          .Include(c => c.Subject)
-                                          .ToList();
+                .Include(c => c.Subject)
+                .ToList();
+
             return View(enrollment);
         }
 
@@ -115,8 +134,20 @@ namespace AcademicGradingSystem.Controllers
                     else
                         throw;
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
+            // Recargar combos si hay error
+            ViewData["Students"] = _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.Role.RoleName == "Student")
+                .ToList();
+
+            ViewData["Courses"] = _context.Courses
+                .Include(c => c.Subject)
+                .ToList();
+
             return View(enrollment);
         }
 
@@ -126,9 +157,10 @@ namespace AcademicGradingSystem.Controllers
             if (id == null) return NotFound();
 
             var enrollment = await _context.Enrollments
-                                           .Include(e => e.Student)
-                                           .Include(e => e.Course)
-                                           .FirstOrDefaultAsync(m => m.EnrollmentId == id);
+                .Include(e => e.Student)
+                .Include(e => e.Course)
+                .FirstOrDefaultAsync(m => m.EnrollmentId == id);
+
             if (enrollment == null) return NotFound();
 
             return View(enrollment);
@@ -140,11 +172,13 @@ namespace AcademicGradingSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var enrollment = await _context.Enrollments.FindAsync(id);
+
             if (enrollment != null)
             {
                 _context.Enrollments.Remove(enrollment);
                 await _context.SaveChangesAsync();
             }
+
             return RedirectToAction(nameof(Index));
         }
     }

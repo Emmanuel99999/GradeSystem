@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
 
 namespace AcademicGradingSystem.Models
 {
@@ -34,8 +36,9 @@ namespace AcademicGradingSystem.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
-        // Navegaciones
+        [ValidateNever]  
         public Role Role { get; set; } = null!;
+
 
         // Si es docente: cursos que dicta
         public ICollection<Course> CoursesTaught { get; set; } = new List<Course>();
