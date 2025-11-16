@@ -1,3 +1,6 @@
+@model AcademicGradingSystem.Models.Report
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 @{
     ViewData["Title"] = "Generate Report";
 }
@@ -7,24 +10,28 @@
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
 
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <!-- Estudiante -->
     <div class="form-group mb-3">
-        <label for="StudentId">Student</label>
-        <select id="StudentId"
-                name="StudentId"
+        <label asp-for="StudentId">Student</label>
+        <select asp-for="StudentId"
                 class="form-control"
-                asp-items="ViewBag.Students">
+                asp-items="@(ViewBag.Students as IEnumerable<SelectListItem>)">
             <option value="">-- Select student --</option>
         </select>
+        <span asp-validation-for="StudentId" class="text-danger"></span>
     </div>
 
+    <!-- Curso -->
     <div class="form-group mb-3">
-        <label for="CourseId">Course</label>
-        <select id="CourseId"
-                name="CourseId"
+        <label asp-for="CourseId">Course</label>
+        <select asp-for="CourseId"
                 class="form-control"
-                asp-items="ViewBag.Courses">
+                asp-items="@(ViewBag.Courses as IEnumerable<SelectListItem>)">
             <option value="">-- Select course --</option>
         </select>
+        <span asp-validation-for="CourseId" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Generate</button>
@@ -45,4 +52,8 @@
             }
         </ul>
     </div>
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

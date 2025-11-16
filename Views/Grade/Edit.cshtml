@@ -7,6 +7,8 @@
 <h2>Edit Grade</h2>
 
 <form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
     <input type="hidden" asp-for="GradeId" />
 
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -15,12 +17,7 @@
         <label asp-for="StudentId" class="form-label">Student</label>
         <select asp-for="StudentId"
                 class="form-select"
-                asp-items="@(new SelectList(
-                    (IEnumerable<AcademicGradingSystem.Models.User>)ViewData["Students"],
-                    nameof(AcademicGradingSystem.Models.User.UserId),
-                    nameof(AcademicGradingSystem.Models.User.Email),
-                    Model.StudentId
-                ))">
+                asp-items="ViewBag.Students">
             <option value="">-- Select student --</option>
         </select>
         <span asp-validation-for="StudentId" class="text-danger"></span>
@@ -30,12 +27,7 @@
         <label asp-for="PlanId" class="form-label">Plan / Activity</label>
         <select asp-for="PlanId"
                 class="form-select"
-                asp-items="@(new SelectList(
-                    (IEnumerable<AcademicGradingSystem.Models.EvaluationPlan>)ViewData["Plans"],
-                    nameof(AcademicGradingSystem.Models.EvaluationPlan.PlanId),
-                    nameof(AcademicGradingSystem.Models.EvaluationPlan.ActivityName),
-                    Model.PlanId
-                ))">
+                asp-items="ViewBag.Plans">
             <option value="">-- Select activity --</option>
         </select>
         <span asp-validation-for="PlanId" class="text-danger"></span>

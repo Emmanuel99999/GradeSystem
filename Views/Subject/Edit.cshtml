@@ -1,26 +1,45 @@
 @model AcademicGradingSystem.Models.Subject
+
 @{
     ViewData["Title"] = "Edit Subject";
 }
+
 <h2>Edit Subject</h2>
+
 <form asp-action="Edit" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="SubjectId" />
-    <div class="form-group">
-        <label asp-for="SubjectName"></label>
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group mb-3">
+        <label asp-for="SubjectName" class="control-label"></label>
         <input asp-for="SubjectName" class="form-control" />
         <span asp-validation-for="SubjectName" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="Code"></label>
+
+    <div class="form-group mb-3">
+        <label asp-for="Code" class="control-label"></label>
         <input asp-for="Code" class="form-control" />
         <span asp-validation-for="Code" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label>Program</label>
-        <select asp-for="ProgramId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<SelectListItem>)ViewData["Programs"], "ProgramId", "ProgramName"))"></select>
+
+    <div class="form-group mb-3">
+        <label asp-for="ProgramId" class="control-label">Program</label>
+        <select asp-for="ProgramId"
+                class="form-control"
+                asp-items="ViewBag.Programs">
+            <option value="">-- Select program --</option>
+        </select>
+        <span asp-validation-for="ProgramId" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

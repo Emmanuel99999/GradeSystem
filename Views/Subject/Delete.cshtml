@@ -9,7 +9,7 @@
     <p>Code: @Model.Code</p>
     <p>Program: @Model.Program?.ProgramName</p>
 </div>
-<form asp-action="DeleteConfirmed" method="post">
+<form asp-action="Delete" method="post">
     @Html.AntiForgeryToken()
     <input type="hidden" asp-for="SubjectId" />
     <button type="submit" class="btn btn-danger">Delete</button>

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using AcademicGradingSystem.Data;
 using AcademicGradingSystem.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; 
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace AcademicGradingSystem.Controllers
@@ -69,7 +69,7 @@ namespace AcademicGradingSystem.Controllers
         {
             var students = await _context.Users
                 .Include(u => u.Role)
-                .Where(u => u.Role.RoleName == "Student" || u.Role.RoleName == "Estudiante") //ajusta al texto real
+                .Where(u => u.Role.RoleName == "Student" || u.Role.RoleName == "Estudiante") // ajusta al texto real
                 .AsNoTracking()
                 .OrderBy(u => u.FirstName)
                 .ThenBy(u => u.LastName)
@@ -139,14 +139,17 @@ namespace AcademicGradingSystem.Controllers
 
             foreach (var plan in plans)
             {
-                var score = await _context.Grades
+                double? score = await _context.Grades
                     .Where(g => g.PlanId == plan.PlanId && g.StudentId == StudentId)
                     .OrderByDescending(g => g.DateRecorded)
                     .Select(g => (double?)g.Score)
                     .FirstOrDefaultAsync();
 
-                if (score.HasValue)
+                if (score != null)
+                {
                     finalScore += score.Value * (plan.Weight / totalWeight);
+                }
+                // Si no hay nota para ese plan, no aporta nada
             }
 
             var report = new Report

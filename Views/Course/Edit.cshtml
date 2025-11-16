@@ -1,31 +1,60 @@
 @model AcademicGradingSystem.Models.Course
+
 @{
     ViewData["Title"] = "Edit Course";
 }
+
 <h2>Edit Course</h2>
+
 <form asp-action="Edit" method="post">
     @Html.AntiForgeryToken()
+
     <input type="hidden" asp-for="CourseId" />
+
     <div class="form-group">
-        <label asp-for="CourseName"></label>
+        <label asp-for="CourseName" class="control-label"></label>
         <input asp-for="CourseName" class="form-control" />
         <span asp-validation-for="CourseName" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label>Subject</label>
-        <select asp-for="SubjectId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.Subject>)ViewData["Subjects"], "SubjectId", "SubjectName"))"></select>
+        <label asp-for="SubjectId" class="control-label">Subject</label>
+        <select asp-for="SubjectId"
+                class="form-control"
+                asp-items="ViewBag.Subjects">
+            <option value="">-- Select Subject --</option>
+        </select>
+        <span asp-validation-for="SubjectId" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label>Academic Period</label>
-        <select asp-for="PeriodId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.AcademicPeriod>)ViewData["Periods"], "PeriodId", "Name"))"></select>
+        <label asp-for="PeriodId" class="control-label">Academic Period</label>
+        <select asp-for="PeriodId"
+                class="form-control"
+                asp-items="ViewBag.Periods">
+            <option value="">-- Select Period --</option>
+        </select>
+        <span asp-validation-for="PeriodId" class="text-danger"></span>
     </div>
+
     <div class="form-group">
-        <label>Teacher</label>
-        <select asp-for="TeacherId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.User>)ViewData["Teachers"], "User Id", "Email"))"></select>
+        <label asp-for="TeacherId" class="control-label">Teacher</label>
+        <select asp-for="TeacherId"
+                class="form-control"
+                asp-items="ViewBag.Teachers">
+            <option value="">-- Select Teacher --</option>
+        </select>
+        <span asp-validation-for="TeacherId" class="text-danger"></span>
     </div>
+
+    <br />
+
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

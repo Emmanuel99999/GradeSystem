@@ -1,35 +1,42 @@
 @model AcademicGradingSystem.Models.Enrollment
+
 @{
     ViewData["Title"] = "Enroll Student";
 }
+
 <h2>Enroll Student</h2>
+
 <form asp-action="Create" method="post">
     @Html.AntiForgeryToken()
-    <div class="form-group">
-        <label>Student</label>
-        <select asp-for="StudentId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.User>)ViewData["Students"], "User Id", "Email"))"></select>
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group mb-3">
+        <label asp-for="StudentId" class="control-label">Student</label>
+        <select asp-for="StudentId"
+                class="form-control"
+                asp-items="ViewBag.Students">
+            <option value="">-- Select student --</option>
+        </select>
+        <span asp-validation-for="StudentId" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label>Course</label>
-        <select asp-for="CourseId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<AcademicGradingSystem.Models.Course>)ViewData["Courses"], "CourseId", "CourseName"))"></select>
+
+    <div class="form-group mb-3">
+        <label asp-for="CourseId" class="control-label">Course</label>
+        <select asp-for="CourseId"
+                class="form-control"
+                asp-items="ViewBag.Courses">
+            <option value="">-- Select course --</option>
+        </select>
+        <span asp-validation-for="CourseId" class="text-danger"></span>
     </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
-@if (!ViewData.ModelState.IsValid)
-{
-    <div class="alert alert-danger mt-3">
-        <strong>Errores del modelo:</strong>
-        <ul>
-            @foreach (var state in ViewData.ModelState)
-            {
-                foreach (var error in state.Value.Errors)
-                {
-                    <li><strong>@state.Key</strong>: @error.ErrorMessage</li>
-                }
-            }
-        </ul>
-    </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

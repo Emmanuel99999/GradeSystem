@@ -7,28 +7,64 @@
 <h2>Edit User</h2>
 
 <form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+
     <input type="hidden" asp-for="UserId" />
-    <div class="form-group">
-        <label asp-for="FirstName"></label>
+
+    <div class="form-group mb-3">
+        <label asp-for="FirstName" class="control-label"></label>
         <input asp-for="FirstName" class="form-control" />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="LastName"></label>
+
+    <div class="form-group mb-3">
+        <label asp-for="LastName" class="control-label"></label>
         <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="Email"></label>
+
+    <div class="form-group mb-3">
+        <label asp-for="Email" class="control-label"></label>
         <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label>Role</label>
-        <select asp-for="RoleId" class="form-control"
-                asp-items="@(new SelectList((IEnumerable<SelectListItem>)ViewData["Roles"], "RoleId", "RoleName"))"></select>
+
+    <div class="form-group mb-3">
+        <label asp-for="RoleId" class="control-label">Role</label>
+        <select asp-for="RoleId"
+                class="form-control"
+                asp-items="ViewBag.Roles">
+            <option value="">-- Select Role --</option>
+        </select>
+        <span asp-validation-for="RoleId" class="text-danger"></span>
     </div>
-    <div class="form-group">
-        <label asp-for="IsActive"></label>
-        <input asp-for="IsActive" type="checkbox" />
+
+    <div class="form-group mb-3 form-check">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
     </div>
+
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger mt-3">
+        <strong>Errores del modelo:</strong>
+        <ul>
+            @foreach (var state in ViewData.ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    <li><strong>@state.Key</strong>: @error.ErrorMessage</li>
+                }
+            }
+        </ul>
+    </div>
+}

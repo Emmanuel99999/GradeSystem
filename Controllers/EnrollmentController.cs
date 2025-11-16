@@ -1,7 +1,8 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AcademicGradingSystem.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AcademicGradingSystem.Models;
 
@@ -21,7 +22,6 @@ namespace AcademicGradingSystem.Controllers
         {
             var enrollments = await _context.Enrollments
                 .Include(e => e.Student)
-                    .ThenInclude(s => s.Role)
                 .Include(e => e.Course)
                     .ThenInclude(c => c.Subject)
                 .OrderByDescending(e => e.RegistrationDate)
@@ -49,15 +49,7 @@ namespace AcademicGradingSystem.Controllers
         // GET: Enrollment/Create
         public IActionResult Create()
         {
-            ViewData["Students"] = _context.Users
-                .Include(u => u.Role)
-                .Where(u => u.Role.RoleName == "Student")
-                .ToList();
-
-            ViewData["Courses"] = _context.Courses
-                .Include(c => c.Subject)
-                .ToList();
-
+            LoadCombos();
             return View();
         }
 
@@ -69,7 +61,8 @@ namespace AcademicGradingSystem.Controllers
             if (ModelState.IsValid)
             {
                 bool exists = await _context.Enrollments
-                    .AnyAsync(e => e.StudentId == enrollment.StudentId && e.CourseId == enrollment.CourseId);
+                    .AnyAsync(e => e.StudentId == enrollment.StudentId &&
+                                   e.CourseId == enrollment.CourseId);
 
                 if (!exists)
                 {
@@ -80,16 +73,7 @@ namespace AcademicGradingSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Recargar combos si hay error
-            ViewData["Students"] = _context.Users
-                .Include(u => u.Role)
-                .Where(u => u.Role.RoleName == "Student")
-                .ToList();
-
-            ViewData["Courses"] = _context.Courses
-                .Include(c => c.Subject)
-                .ToList();
-
+            LoadCombos(enrollment.StudentId, enrollment.CourseId);
             return View(enrollment);
         }
 
@@ -101,15 +85,7 @@ namespace AcademicGradingSystem.Controllers
             var enrollment = await _context.Enrollments.FindAsync(id);
             if (enrollment == null) return NotFound();
 
-            ViewData["Students"] = _context.Users
-                .Include(u => u.Role)
-                .Where(u => u.Role.RoleName == "Student")
-                .ToList();
-
-            ViewData["Courses"] = _context.Courses
-                .Include(c => c.Subject)
-                .ToList();
-
+            LoadCombos(enrollment.StudentId, enrollment.CourseId);
             return View(enrollment);
         }
 
@@ -129,7 +105,7 @@ namespace AcademicGradingSystem.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Enrollments.Any(e => e.EnrollmentId == enrollment.EnrollmentId))
+                    if (!await _context.Enrollments.AnyAsync(e => e.EnrollmentId == enrollment.EnrollmentId))
                         return NotFound();
                     else
                         throw;
@@ -138,16 +114,7 @@ namespace AcademicGradingSystem.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Recargar combos si hay error
-            ViewData["Students"] = _context.Users
-                .Include(u => u.Role)
-                .Where(u => u.Role.RoleName == "Student")
-                .ToList();
-
-            ViewData["Courses"] = _context.Courses
-                .Include(c => c.Subject)
-                .ToList();
-
+            LoadCombos(enrollment.StudentId, enrollment.CourseId);
             return View(enrollment);
         }
 
@@ -180,6 +147,36 @@ namespace AcademicGradingSystem.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // =============== MÉTODO AUXILIAR PARA COMBOS ===============
+
+        private void LoadCombos(int? selectedStudentId = null, int? selectedCourseId = null)
+        {
+       
+            // usamos TODOS los usuarios activos como candidatos a "Student"
+            var students = _context.Users
+                .Where(u => u.IsActive)
+                .ToList();
+
+            var courses = _context.Courses
+                .Include(c => c.Subject)
+                .Include(c => c.AcademicPeriod)
+                .ToList();
+
+            ViewBag.Students = new SelectList(
+                students,
+                "UserId",      // value
+                "FullName",    // text (asegúrate de tener esta propiedad en User)
+                selectedStudentId
+            );
+
+            ViewBag.Courses = new SelectList(
+                courses,
+                "CourseId",
+                "CourseName",
+                selectedCourseId
+            );
         }
     }
 }
