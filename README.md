@@ -1,6 +1,15 @@
 ![WhatsApp Image 2025-09-27 at 10 19 25 AM](https://github.com/user-attachments/assets/af001b95-e0aa-4480-8b75-ca6cad432e6b)
 ![WhatsApp Image 2025-09-13 at 5 40 03 PM](https://github.com/user-attachments/assets/d390fc8a-5148-4602-8cef-81d3437f3c97)
 
+Diagrama de clases (Actualizado )
+
+<img width="920" height="557" alt="image" src="https://github.com/user-attachments/assets/cd142456-b196-459a-bab2-bd02b4b2cf05" />
+
+Diagrama UML por capas 
+
+<img width="920" height="618" alt="image" src="https://github.com/user-attachments/assets/b698c353-1dea-4887-98dc-40bd092b815e" />
+
+
 # 🎓 Sistema de Notas Académicas
 
 **Autores:**  
@@ -18,23 +27,34 @@
 
 ## 🧠 Descripción General
 
-El **Sistema de Notas Académicas** es una aplicación web desarrollada con **ASP.NET Core MVC** y **API REST** que optimiza la gestión de calificaciones en instituciones universitarias.  
-Resuelve problemas comunes como el registro manual de notas, los errores en el cálculo de promedios y la falta de reportes claros y automatizados.  
 
-El sistema permite registrar estudiantes, asignaturas y programas académicos; gestionar cursos, planes de evaluación y calificaciones; calcular automáticamente los promedios y generar reportes académicos en PDF desde una plataforma centralizada y segura.
+El Sistema de Gestión de Calificaciones Académicas es una plataforma digital diseñada para automatizar el proceso académico relacionado con el registro, cálculo, administración y generación de reportes de notas dentro de una institución educativa. El sistema integra módulos para gestionar usuarios, cursos, programas académicos, planes de evaluación y calificaciones, garantizando precisión, seguridad y eficiencia.
+
+El proyecto utiliza una arquitectura basada en MVC, apoyada en una API REST para la comunicación entre capas y una base de datos relacional implementada en SQL mediante Entity Framework Core. El objetivo central es proporcionar una herramienta moderna, organizada y confiable que optimice la gestión académica tanto para docentes como para estudiantes.
+
+
+---
+
+## 📓 Objetivo del Proyecto
+Desarrollar un sistema informático que permita gestionar de manera automatizada las calificaciones académicas de los estudiantes, integrando el registro de datos, el cálculo de promedios y la generación de reportes académicos.
 
 ---
 
 ## 🎯 Objetivos Específicos 
-Fase del Ciclo de Desarrollo	Objetivo Específico
-1. Análisis	Identificar los requerimientos funcionales y no funcionales del sistema de notas académicas mediante la especificación de casos de uso y entidades del dominio.
-2. Diseño	Diseñar la arquitectura en capas (MVC) que permita el desacoplamiento entre la lógica de negocio, la capa de datos y la interfaz de usuario, incluyendo la definición de interfaces y DTOs.
-3. Implementación	Implementar el caso de uso de gestión de calificaciones utilizando Entity Framework Core como ORM para mapear correctamente las entidades y relaciones entre tablas.
-4. Integración	Integrar los controladores MVC y la API REST para exponer los endpoints de negocio, documentando los servicios con Swagger / OpenAPI.
-5. Pruebas y Validación	Validar la persistencia de datos, el funcionamiento de los cálculos de promedios y la correcta respuesta de los endpoints mediante pruebas funcionales y de integración.
-6. Despliegue y Mantenimiento	Configurar la base de datos en SQL Server Express, habilitar migraciones automáticas y garantizar la portabilidad del sistema mediante contenedores o scripts estándar.
+1.	Realizar el análisis de los requisitos funcionales y no funcionales del sistema de gestión de calificaciones.
+2.	Diseñar la estructura del sistema, incluyendo la arquitectura por capas, los modelos de datos y los diagramas UML.
+3.	Implementar los módulos del sistema correspondientes al registro de estudiantes, asignaturas y calificaciones.
+4.	Probar el funcionamiento del sistema para garantizar la confiabilidad del cálculo de promedios y la generación de reportes.
+5.	Implantar el sistema desarrollado para su uso como herramienta de gestión académica institucional.
+   
+---
+
+## 🗺️ Esquema del proyecto de software: 
+
+<img width="920" height="625" alt="image" src="https://github.com/user-attachments/assets/23a81fd2-894b-4d5b-afc9-d6358c8d7605" />
 
 ---
+
 
 ## ⚙️ Requisitos Funcionales
 
